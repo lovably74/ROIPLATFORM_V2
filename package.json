@@ -3,11 +3,6 @@
   "version": "1.0.0",
   "description": "CISP (Construction IT Solution Portal) - 멀티테넌트 SaaS 플랫폼",
   "private": true,
-  "workspaces": [
-    "services/*",
-    "frontend/*",
-    "shared/common-libs"
-  ],
   "scripts": {
     "dev": "concurrently \"npm:dev:*\"",
     "dev:gateway": "cd services/gateway && npm run dev",

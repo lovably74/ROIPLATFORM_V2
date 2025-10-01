@@ -321,7 +321,7 @@
                     <version>${flyway.version}</version>
                     <configuration>
                         <driver>org.postgresql.Driver</driver>
-                        <url>jdbc:postgresql://localhost:5432/roiplatform_dev</url>
+                        <url>jdbc:postgresql://localhost:5432/roiplatform</url>
                         <user>postgres</user>
                         <password>postgres123</password>
                         <locations>

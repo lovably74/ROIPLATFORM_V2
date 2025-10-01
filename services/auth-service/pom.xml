@@ -117,7 +117,7 @@
                 <artifactId>flyway-maven-plugin</artifactId>
                 <configuration>
                     <driver>org.postgresql.Driver</driver>
-                    <url>jdbc:postgresql://localhost:5432/roiplatform_dev</url>
+                    <url>jdbc:postgresql://localhost:5432/roiplatform</url>
                     <user>postgres</user>
                     <password>postgres123</password>
                     <locations>
@@ -126,6 +126,8 @@
                     <schemas>
                         <schema>public</schema>
                     </schemas>
+                    <baselineOnMigrate>true</baselineOnMigrate>
+                    <baselineDescription>Baseline existing non-empty schema</baselineDescription>
                 </configuration>
             </plugin>
         </plugins>

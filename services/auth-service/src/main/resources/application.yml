@@ -74,6 +74,33 @@ management:
   endpoint:
     health:
       show-details: when-authorized
+  health:
+    redis:
+      enabled: false
+
+# Profile-specific overrides for Windows dev: disable Redis health if Redis isn't running
+---
+spring:
+  profiles: development
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisReactiveAutoConfiguration
+management:
+  health:
+    redis:
+      enabled: false
+---
+spring:
+  profiles: dev
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisReactiveAutoConfiguration
+management:
+  health:
+    redis:
+      enabled: false
 
 # Application Information
 info:
