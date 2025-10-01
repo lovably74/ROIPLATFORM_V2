@@ -1,0 +1,128 @@
+version: '3.8'
+
+services:
+  # 데이터베이스
+  postgres:
+    image: postgres:16-alpine
+    container_name: cisp-postgres
+    environment:
+      POSTGRES_DB: cisp_dev
+      POSTGRES_USER: cisp_user
+      POSTGRES_PASSWORD: cisp_password123!
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cisp_user -d cisp_dev"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # 캐시 및 세션 스토어
+  redis:
+    image: redis:7-alpine
+    container_name: cisp-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # API Gateway
+  gateway:
+    build:
+      context: ./services/gateway
+      dockerfile: Dockerfile
+    container_name: cisp-gateway
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://cisp_user:cisp_password123!@postgres:5432/cisp_dev
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./services/gateway:/app
+      - /app/node_modules
+    command: npm run dev
+
+  # 인증 서비스
+  auth:
+    build:
+      context: ./services/auth
+      dockerfile: Dockerfile
+    container_name: cisp-auth
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://cisp_user:cisp_password123!@postgres:5432/cisp_dev
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=your-super-secret-jwt-key-change-in-production
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./services/auth:/app
+      - /app/node_modules
+    command: npm run dev
+
+  # 테넌트 서비스
+  tenant:
+    build:
+      context: ./services/tenant
+      dockerfile: Dockerfile
+    container_name: cisp-tenant
+    ports:
+      - "3002:3000"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://cisp_user:cisp_password123!@postgres:5432/cisp_dev
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./services/tenant:/app
+      - /app/node_modules
+    command: npm run dev
+
+  # 웹 프론트엔드
+  web-frontend:
+    build:
+      context: ./frontend/web
+      dockerfile: Dockerfile
+    container_name: cisp-web-frontend
+    ports:
+      - "3100:3000"
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_API_URL=http://localhost:3000
+    volumes:
+      - ./frontend/web:/app
+      - /app/node_modules
+      - /app/.next
+    command: npm run dev
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  default:
+    name: cisp-network

@@ -1,0 +1,82 @@
+{
+  "name": "cisp-platform",
+  "version": "1.0.0",
+  "description": "CISP (Construction IT Solution Portal) - 멀티테넌트 SaaS 플랫폼",
+  "private": true,
+  "workspaces": [
+    "services/*",
+    "frontend/*",
+    "shared/common-libs"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm:dev:*\"",
+    "dev:gateway": "cd services/gateway && npm run dev",
+    "dev:auth": "cd services/auth && npm run dev",
+    "dev:tenant": "cd services/tenant && npm run dev",
+    "dev:web": "cd frontend/web && npm run dev",
+    "build": "npm run build:shared && npm run build:services && npm run build:frontend",
+    "build:shared": "cd shared/common-libs && npm run build",
+    "build:services": "npm run build:gateway && npm run build:auth && npm run build:tenant",
+    "build:gateway": "cd services/gateway && npm run build",
+    "build:auth": "cd services/auth && npm run build",
+    "build:tenant": "cd services/tenant && npm run build",
+    "build:frontend": "cd frontend/web && npm run build",
+    "test": "npm run test:services && npm run test:frontend",
+    "test:services": "npm run test:gateway && npm run test:auth && npm run test:tenant",
+    "test:gateway": "cd services/gateway && npm test",
+    "test:auth": "cd services/auth && npm test",
+    "test:tenant": "cd services/tenant && npm test",
+    "test:frontend": "cd frontend/web && npm test",
+    "lint": "npm run lint:services && npm run lint:frontend",
+    "lint:services": "npm run lint:gateway && npm run lint:auth && npm run lint:tenant",
+    "lint:gateway": "cd services/gateway && npm run lint",
+    "lint:auth": "cd services/auth && npm run lint",
+    "lint:tenant": "cd services/tenant && npm run lint",
+    "lint:frontend": "cd frontend/web && npm run lint",
+    "clean": "npm run clean:services && npm run clean:frontend && npm run clean:shared",
+    "clean:services": "cd services/gateway && npm run clean || true && cd ../auth && npm run clean || true && cd ../tenant && npm run clean || true",
+    "clean:frontend": "cd frontend/web && npm run clean || true",
+    "clean:shared": "cd shared/common-libs && npm run clean || true",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "docker:build": "docker-compose build",
+    "db:migrate": "cd database && npm run migrate",
+    "db:seed": "cd database && npm run seed",
+    "db:reset": "cd database && npm run reset",
+    "setup": "npm install && npm run build:shared && npm run db:migrate && npm run db:seed",
+    "postinstall": "npm run build:shared"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "concurrently": "^8.2.0",
+    "eslint": "^8.45.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.1.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "author": "CISP Development Team",
+  "license": "MIT",
+  "keywords": [
+    "construction",
+    "pmis",
+    "epms",
+    "erp",
+    "saas",
+    "multitenant",
+    "microservices",
+    "typescript",
+    "nodejs"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/cisp-platform.git"
+  }
+}
