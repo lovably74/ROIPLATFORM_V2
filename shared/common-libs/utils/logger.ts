@@ -69,16 +69,16 @@ export class CISPLogger {
       format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss.SSS' }),
       format.errors({ stack: true }),
       format.json(),
-      format.printf((info) => {
+      format.printf((info: any) => {
         const meta: LogMeta = {
-          timestamp: info.timestamp,
+          timestamp: info.timestamp as string,
           level: info.level as LogLevel,
-          message: info.message,
+          message: info.message as string,
           service: this.serviceName,
           environment: this.environment,
           hostname: require('os').hostname(),
           pid: process.pid,
-          ...info
+          ...(info as LogContext)
         };
 
         // 스택 트레이스 처리
@@ -101,7 +101,7 @@ export class CISPLogger {
           format: format.combine(
             format.colorize(),
             format.timestamp({ format: 'HH:mm:ss' }),
-            format.printf((info) => {
+            format.printf((info: any) => {
               const context = info.tenantId ? `[${info.tenantId}]` : '';
               const requestId = info.requestId ? `[${info.requestId}]` : '';
               return `${info.timestamp} [${info.level}] [${this.serviceName}]${context}${requestId}: ${info.message}`;
@@ -257,7 +257,13 @@ let globalLogger: CISPLogger;
 /**
  * 로거 초기화
  */
-export const initializeLogger = (serviceName: string, options?: Parameters<typeof CISPLogger.prototype.constructor>[1]): CISPLogger => {
+export const initializeLogger = (serviceName: string, options?: {
+  level?: LogLevel;
+  environment?: string;
+  logDir?: string;
+  enableConsole?: boolean;
+  enableFile?: boolean;
+}): CISPLogger => {
   globalLogger = new CISPLogger(serviceName, options);
   return globalLogger;
 };

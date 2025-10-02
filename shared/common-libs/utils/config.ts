@@ -12,16 +12,8 @@ export enum Environment {
   TEST = 'test'
 }
 
-/**
- * 로그 레벨
- */
-export enum LogLevel {
-  ERROR = 'error',
-  WARN = 'warn',
-  INFO = 'info',
-  HTTP = 'http',
-  DEBUG = 'debug'
-}
+// LogLevel은 logger.ts에서 import
+import { LogLevel } from './logger';
 
 /**
  * 데이터베이스 설정 스키마
