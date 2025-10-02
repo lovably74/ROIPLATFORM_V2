@@ -39,9 +39,9 @@ start-dev.bat
 
 ### 2. 서비스 실행
 
-#### Gateway Service (Node.js)
+#### Gateway Service (Node.js + TypeScript)
 ```bash
-cd services/gateway-service
+cd services/gateway
 npm install
 npm run dev
 ```
@@ -98,20 +98,41 @@ mvn spring-boot:run
 ```
 ROIPLATFORM_V2/
 ├── services/                 # 마이크로서비스
-│   ├── gateway-service/       # API Gateway (Node.js)
-│   ├── auth-service/         # 인증서비스 (Java)
-│   ├── tenant-service/       # 테넌트서비스 (Java)
-│   └── ...
-├── clients/                  # 클라이언트 앱
-│   ├── web-client/           # React 웹앱
-│   ├── desktop-client/       # Tauri 데스크톱
-│   └── mobile-client/        # Ionic 모바일
+│   ├── gateway/              # API Gateway (Node.js + TypeScript)
+│   ├── auth-service/         # 인증서비스 (Java Spring Boot)
+│   ├── tenant/               # 테넌트서비스 (Java)
+│   ├── billing/              # 과금서비스
+│   ├── file-dms/             # 파일관리서비스
+│   ├── notification/         # 알림서비스
+│   ├── pmis-collab/          # PMIS 협업서비스
+│   ├── pmis-project/         # PMIS 프로젝트서비스
+│   ├── usage-metering/       # 사용량측정서비스
+│   └── workflow/             # 워크플로우서비스
+├── frontend/                 # 프론트엔드
+│   ├── web-app/              # Vue.js 웹앱
+│   ├── web/                  # 웹 클라이언트
+│   ├── desktop/              # 데스크톱 앱
+│   └── mobile/               # 모바일 앱
+├── backend/                  # 백엔드 공통
+│   └── roiplatform-gateway/  # Spring Cloud Gateway
 ├── shared/                   # 공통 리소스
 │   ├── database/             # DB 스키마 & 마이그레이션
-│   ├── common-libs/          # 공통 라이브러리
-│   └── i18n/                # 다국어 리소스
-└── dev-environment/          # 개발환경 설정
-    └── local-config/         # 로컬 환경변수
+│   ├── common-libs/          # 공통 라이브러리 (Java + TypeScript)
+│   ├── config/               # 공통 설정
+│   ├── schemas/              # 스키마 정의
+│   └── types/                # 타입 정의
+├── database/                 # 데이터베이스
+│   ├── migrations/           # 마이그레이션 스크립트
+│   ├── schemas/              # 스키마 정의
+│   ├── scripts/              # 유틸리티 스크립트
+│   └── seeds/                # 초기 데이터
+├── infrastructure/           # 인프라
+│   ├── docker/               # Docker 설정
+│   ├── kubernetes/           # K8s 매니페스트
+│   ├── monitoring/           # 모니터링 설정
+│   └── terraform/            # 인프라 코드
+├── docs/                     # 문서
+└── scripts/                  # 개발 스크립트
 ```
 
 ### 개발 워크플로우
