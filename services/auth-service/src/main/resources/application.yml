@@ -78,29 +78,75 @@ management:
     redis:
       enabled: false
 
-# Profile-specific overrides for Windows dev: disable Redis health if Redis isn't running
----
-spring:
-  profiles: development
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
-      - org.springframework.boot.autoconfigure.data.redis.RedisReactiveAutoConfiguration
-management:
-  health:
-    redis:
-      enabled: false
----
-spring:
-  profiles: dev
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
-      - org.springframework.boot.autoconfigure.data.redis.RedisReactiveAutoConfiguration
-management:
-  health:
-    redis:
-      enabled: false
+    # Profile-specific overrides for Windows dev: disable Redis health if Redis isn't running
+    ---
+    spring:
+      profiles: development
+      autoconfigure:
+        exclude:
+          - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+          - org.springframework.boot.autoconfigure.data.redis.RedisReactiveAutoConfiguration
+      jpa:
+        properties:
+          hibernate:
+            jdbc:
+              batch_size: 25
+              batch_versioned_data: true
+            order_inserts: true
+            order_updates: true
+            generate_statistics: false
+      datasource:
+        hikari:
+          leak-detection-threshold: 60000
+          connection-test-query: SELECT 1
+    management:
+      health:
+        redis:
+          enabled: false
+        db:
+          enabled: true
+      endpoints:
+        web:
+          exposure:
+            include: health,info,metrics,prometheus
+      endpoint:
+        health:
+          show-details: when-authorized
+          show-components: always
+    ---
+    spring:
+      profiles: dev
+      autoconfigure:
+        exclude:
+          - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+          - org.springframework.boot.autoconfigure.data.redis.RedisReactiveAutoConfiguration
+      jpa:
+        properties:
+          hibernate:
+            jdbc:
+              batch_size: 25
+              batch_versioned_data: true
+            order_inserts: true
+            order_updates: true
+            generate_statistics: false
+      datasource:
+        hikari:
+          leak-detection-threshold: 60000
+          connection-test-query: SELECT 1
+    management:
+      health:
+        redis:
+          enabled: false
+        db:
+          enabled: true
+      endpoints:
+        web:
+          exposure:
+            include: health,info,metrics,prometheus
+      endpoint:
+        health:
+          show-details: when-authorized
+          show-components: always
 
 # Application Information
 info:

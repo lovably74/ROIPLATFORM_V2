@@ -1,7 +1,6 @@
 import { defineConfig } from 'windicss/helpers'
 import colors from 'windicss/colors'
 import typography from 'windicss/plugin/typography'
-import forms from 'windicss/plugin/forms'
 import aspectRatio from 'windicss/plugin/aspect-ratio'
 
 export default defineConfig({
@@ -192,7 +191,6 @@ export default defineConfig({
 
   plugins: [
     typography(),
-    forms(),
     aspectRatio(),
     
     // 커스텀 플러그인 - 접근성 및 유틸리티

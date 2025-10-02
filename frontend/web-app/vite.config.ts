@@ -133,9 +133,10 @@ export default defineConfig({
   },
 
   build: {
-    target: 'es2020',
+    target: 'es2022',
     cssCodeSplit: true,
     sourcemap: process.env.NODE_ENV !== 'production',
+    minify: 'esbuild',
     rollupOptions: {
       output: {
         manualChunks: {
@@ -149,11 +150,24 @@ export default defineConfig({
           'form-vendor': ['vee-validate', '@vee-validate/zod', 'zod'],
           // 다국어
           'i18n-vendor': ['vue-i18n']
-        }
+        },
+        // 파일명 최적화
+        chunkFileNames: 'assets/js/[name]-[hash].js',
+        entryFileNames: 'assets/js/[name]-[hash].js',
+        assetFileNames: 'assets/[ext]/[name]-[hash].[ext]'
       }
     },
     // 청크 크기 경고 임계값
-    chunkSizeWarningLimit: 1000
+    chunkSizeWarningLimit: 1000,
+    // 압축 설정
+    reportCompressedSize: true,
+    // 빌드 성능 최적화
+    terserOptions: {
+      compress: {
+        drop_console: process.env.NODE_ENV === 'production',
+        drop_debugger: process.env.NODE_ENV === 'production'
+      }
+    }
   },
 
   optimizeDeps: {

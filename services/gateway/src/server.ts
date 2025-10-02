@@ -9,9 +9,7 @@ import { createClient } from 'redis';
 // Common libraries
 import { 
   initializeLogger, 
-  getLogger, 
   getConfig,
-  TenantContextManager,
   createTenantContextMiddleware 
 } from '@cisp/common-libs';
 
@@ -34,10 +32,7 @@ class GatewayServer {
   constructor() {
     this.app = express();
     this.config = getConfig('gateway');
-    this.logger = initializeLogger('gateway', {
-      level: this.config.logging.level,
-      environment: this.config.app.environment
-    });
+    this.logger = initializeLogger('gateway');
     
     this.serviceRegistry = new ServiceRegistry();
     this.healthChecker = new HealthChecker();
@@ -204,17 +199,17 @@ class GatewayServer {
    */
   private async setupRoutes(): Promise<void> {
     // 헬스체크 엔드포인트
-    this.app.get('/health', (req: Request, res: Response) => {
+    this.app.get('/health', (_req: Request, res: Response) => {
       res.json({
         status: 'healthy',
         timestamp: new Date().toISOString(),
         service: 'gateway',
-        version: this.config.app.version
+        version: this.config?.app?.version || '1.0.0'
       });
     });
 
     // 상세 헬스체크 엔드포인트
-    this.app.get('/health/detailed', async (req: Request, res: Response) => {
+    this.app.get('/health/detailed', async (_req: Request, res: Response) => {
       try {
         const healthStatus = await this.healthChecker.checkAll();
         res.json(healthStatus);
@@ -227,7 +222,7 @@ class GatewayServer {
     });
 
     // 메트릭 엔드포인트
-    this.app.get('/metrics', (req: Request, res: Response) => {
+    this.app.get('/metrics', (_req: Request, res: Response) => {
       const metrics = this.metricsCollector.getMetrics();
       res.json(metrics);
     });
@@ -260,7 +255,7 @@ class GatewayServer {
     });
 
     // 글로벌 에러 핸들러
-    this.app.use((error: any, req: any, res: any, next: any) => {
+    this.app.use((error: any, req: any, res: any, _next: any) => {
       const statusCode = error.statusCode || error.status || 500;
       
       this.logger.error('Gateway 에러 발생', error, {
